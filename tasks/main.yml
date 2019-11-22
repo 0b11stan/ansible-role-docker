@@ -39,6 +39,7 @@
       - docker-ce-cli
       - containerd.io
       - python-pip
+      - python-requests
 
 - name: docker is enabled
   become: true
