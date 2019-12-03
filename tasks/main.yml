@@ -17,6 +17,7 @@
   package:
     state: present
     name:
+      - python3
       - yum-utils
       - device-mapper-persistent-data
       - lvm2
@@ -51,6 +52,7 @@
 - name: required pip packages are installed
   become: true
   pip:
+    executable: pip3
     name:
       - docker<4.0
       - docker-compose
