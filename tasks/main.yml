@@ -1,3 +1,4 @@
+---
 - name: old packages are removed
   become: true
   package:
@@ -36,6 +37,8 @@
   package:
     state: present
     name:
+      - gcc
+      - python-devel
       - docker-ce
       - docker-ce-cli
       - containerd.io
@@ -52,7 +55,8 @@
 - name: required pip packages are installed
   become: true
   pip:
-    executable: pip3
     name:
-      - docker<4.0
+      - docker
+      - pyyaml
       - docker-compose
+...
