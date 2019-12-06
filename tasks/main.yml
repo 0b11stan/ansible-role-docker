@@ -54,9 +54,5 @@
 
 - name: required pip packages are installed
   become: true
-  pip:
-    name:
-      - docker
-      - pyyaml
-      - docker-compose
+  pip: name=docker
 ...
