@@ -55,4 +55,16 @@
 - name: required pip packages are installed
   become: true
   pip: name=docker
+
+- name: docker-compose is installed
+  get_url:
+    url: https://github.com/docker/compose/releases/download/1.25.0/docker-compose-Linux-x86_64
+    dest: /usr/local/bin/docker-compose
+    mode: 0755
+
+- name: make docker-compose $PATH agnostic
+  file:
+    src: /usr/local/bin/docker-compose
+    dest: /usr/bin/docker-compose
+    state: link
 ...
