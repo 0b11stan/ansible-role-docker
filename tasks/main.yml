@@ -52,10 +52,6 @@
     enabled: true
     state: started
 
-- name: required pip packages are installed
-  become: true
-  pip: name=docker
-
 - name: docker-compose is installed
   become: true
   get_url:
@@ -69,4 +65,12 @@
     src: /usr/local/bin/docker-compose
     dest: /usr/bin/docker-compose
     state: link
+
+- name: required pip packages are installed
+  become: true
+  pip:
+    name:
+      - docker
+      - docker-compose
+      - zipp
 ...
