@@ -5,45 +5,47 @@
     state: absent
     name:
       - docker
-      - docker-client
-      - docker-client-latest
-      - docker-common
-      - docker-latest
-      - docker-latest-logrotate
-      - docker-logrotate
       - docker-engine
+      - docker.io
+      - containerd
+      - runc
 
 - name: required packages are installed
   become: true
   package:
     state: present
     name:
-      - python3
-      - yum-utils
-      - device-mapper-persistent-data
-      - lvm2
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg
+
+- name: docker gpg key is added
+  become: true
+  apt_key:
+    url: https://download.docker.com/linux/debian/gpg
+    keyring: /usr/share/keyrings/docker-archive-keyring.gpg
+    state: present
 
 - name: docker repositories are added
   become: true
-  yum_repository:
-    name: docker-ce-stable
-    description: Docker CE Stable - $basearch
-    baseurl: https://download.docker.com/linux/centos/7/$basearch/stable
-    gpgcheck: true
-    gpgkey: https://download.docker.com/linux/centos/gpg
+  apt_repository:
+    filename: docker
+    update_cache: true
+    repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian buster stable"
 
 - name: docker is installed
   become: true
   package:
     state: present
     name:
-      - gcc
-      - python-devel
       - docker-ce
       - docker-ce-cli
       - containerd.io
-      - python-pip
-      - python-requests
+      #- gcc
+      #- python-devel
+      #- python-pip
+      #- python-requests
 
 - name: docker is enabled
   become: true
@@ -52,25 +54,25 @@
     enabled: true
     state: started
 
-- name: docker-compose is installed
-  become: true
-  get_url:
-    url: "https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-Linux-x86_64"
-    dest: /usr/local/bin/docker-compose
-    mode: 0755
-
-- name: make docker-compose $PATH agnostic
-  become: true
-  file:
-    src: /usr/local/bin/docker-compose
-    dest: /usr/bin/docker-compose
-    state: link
-
-- name: required pip packages are installed
-  become: true
-  pip:
-    name:
-      - docker
-      - docker-compose
-      - zipp
+#- name: docker-compose is installed
+#  become: true
+#  get_url:
+#    url: "https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-Linux-x86_64"
+#    dest: /usr/local/bin/docker-compose
+#    mode: 0755
+#
+#- name: make docker-compose $PATH agnostic
+#  become: true
+#  file:
+#    src: /usr/local/bin/docker-compose
+#    dest: /usr/bin/docker-compose
+#    state: link
+#
+#- name: required pip packages are installed
+#  become: true
+#  pip:
+#    name:
+#      - docker
+#      - docker-compose
+#      - zipp
 ...
