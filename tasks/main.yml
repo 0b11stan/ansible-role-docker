@@ -29,12 +29,16 @@
     state: present
 
 # TODO : can we get this from ansible state
-- command: lsb_release -cs
+- name: retrive debian release
+  command: lsb_release -cs
   register: release_name
+  check_mode: false
 
 # TODO : can we get this from ansible state
-- command: dpkg --print-architecture
+- name: retrive node's architecture
+  command: dpkg --print-architecture
   register: arch_name
+  check_mode: false
 
 # TODO : make the repo string multiline
 - name: docker repositories are added
