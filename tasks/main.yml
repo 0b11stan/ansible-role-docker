@@ -19,6 +19,7 @@
       - ca-certificates
       - curl
       - gnupg
+      - lsb-release
 
 - name: docker gpg key is added
   become: true
@@ -27,12 +28,21 @@
     keyring: /usr/share/keyrings/docker-archive-keyring.gpg
     state: present
 
+# TODO : can we get this from ansible state
+- command: lsb_release -cs
+  register: release_name
+
+# TODO : can we get this from ansible state
+- command: dpkg --print-architecture
+  register: arch_name
+
+# TODO : make the repo string multiline
 - name: docker repositories are added
   become: true
   apt_repository:
     filename: docker
     update_cache: true
-    repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian buster stable"
+    repo: "deb [arch={{ arch_name.stdout_lines[0] }} signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian {{ release_name.stdout_lines[0] }} stable"
 
 - name: docker is installed
   become: true
@@ -42,7 +52,7 @@
       - docker-ce
       - docker-ce-cli
       - containerd.io
-      - python3-pip
+      - docker-compose-plugin
 
 - name: docker is enabled
   become: true
@@ -50,26 +60,4 @@
     name: docker
     enabled: true
     state: started
-
-- name: docker-compose is installed
-  become: true
-  get_url:
-    url: "https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-Linux-x86_64"
-    dest: /usr/local/bin/docker-compose
-    mode: 0755
-
-- name: make docker-compose $PATH agnostic
-  become: true
-  file:
-    src: /usr/local/bin/docker-compose
-    dest: /usr/bin/docker-compose
-    state: link
-
-- name: required pip packages are installed
-  become: true
-  pip:
-    executable: pip3
-    name:
-      - docker
-      - docker-compose
 ...
