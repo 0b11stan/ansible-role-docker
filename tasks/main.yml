@@ -21,10 +21,11 @@
       - gnupg
       - lsb-release
 
+# TODO : url: https://download.docker.com/linux/debian/gpg
 - name: docker gpg key is added
   become: true
   apt_key:
-    url: https://download.docker.com/linux/debian/gpg
+    url: https://download.docker.com/linux/ubuntu/gpg
     keyring: /usr/share/keyrings/docker-archive-keyring.gpg
     state: present
 
@@ -40,13 +41,15 @@
   register: arch_name
   check_mode: false
 
+# TODO : adapt for https://download.docker.com/linux/debian
 # TODO : make the repo string multiline
+
 - name: docker repositories are added
   become: true
   apt_repository:
     filename: docker
     update_cache: true
-    repo: "deb [arch={{ arch_name.stdout_lines[0] }} signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian {{ release_name.stdout_lines[0] }} stable"
+    repo: "deb [arch={{ arch_name.stdout_lines[0] }} signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu {{ release_name.stdout_lines[0] }} stable"
 
 - name: docker is installed
   become: true
